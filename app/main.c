@@ -12,6 +12,6 @@ int main(void) {
 
 	while (true) {
 		info("%i", i++);
-		sdk_delay_ms(100);
+		chThdSleepMilliseconds(100);
 	}
 }

@@ -134,13 +134,8 @@ uint32_t get_ticks(void)
  * @param c char
  * @return
  */
-int fm_putchar(int c)
+int putchar(int c)
 {
     chSequentialStreamPut(&SDU1, (uint8_t)c);
     return 1;
-}
-
-void sdk_delay_ms(uint32_t ms)
-{
-	chThdSleepMilliseconds(ms);
 }

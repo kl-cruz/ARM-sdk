@@ -13,11 +13,22 @@
 #include "printf.h"
 
 #ifndef PRINT_INFO_DISABLE
+#define ERROR_LABEL 1
+#define WARN_LABEL 2
+#define INFO_LABEL 3
+#define DEBUG_LABEL 4
 
-#define error(_format, ...) printf("\r\nERROR: %s [%d] :" # _format, __FILE__,__LINE__, ##__VA_ARGS__)
-#define warn(_format, ...)  printf("\r\nWARN: %s [%d] :" #  _format, __FILE__,__LINE__, ##__VA_ARGS__)
-#define info(_format, ...)  printf("\r\nINFO: %s [%d] :" # _format, __FILE__,__LINE__, ##__VA_ARGS__)
-#define debug(_format, ...) printf("\r\nDEBUG: %s [%d] :"# _format, __FILE__,__LINE__, ##__VA_ARGS__)
+static char *__print_labels[] = {
+	"ERROR",
+	"WARN",
+	"INFO",
+	"DEBUG",
+};
+
+#define error(_format, ...) printf("\r\n%s: %s [%d] :" # _format, __print_labels[ERROR_LABEL], __FILE__,__LINE__, ##__VA_ARGS__)
+#define warn(_format, ...)  printf("\r\%s: %s [%d] :" #  _format, __print_labels[WARN_LABEL], __FILE__,__LINE__, ##__VA_ARGS__)
+#define info(_format, ...)  printf("\r\n%s: %s [%d] :" # _format, __print_labels[INFO_LABEL], __FILE__,__LINE__, ##__VA_ARGS__)
+#define debug(_format, ...) printf("\r\n%s: %s [%d] :"# _format, __print_labels[DEBUG_LABEL], __FILE__,__LINE__, ##__VA_ARGS__)
 
 #else
 #define error(_format, ...)
@@ -35,7 +46,5 @@ void start_count_time(void);
 void stop_count_time(void);
 uint32_t get_us(void);
 uint32_t get_ticks(void);
-
-void sdk_delay_ms(uint32_t ms);
 
 #endif

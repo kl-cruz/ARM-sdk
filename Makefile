@@ -6,34 +6,33 @@ PRJ_ROOT =
 
 ifeq ($(MAKECMDGOALS),)
 $(error Please specify make goals!. More info -> make help)
-endif
+endif 
+
+# All configuration
+
+ifeq ($(MAKECMDGOALS), all)
 
 ifeq ($(target),)
-    target = posix
-    include targets/posix.mk
+    $(error Please specify target! make target=... all)
 endif
 
 BUILDDIR = build_$(target)
-ifeq ($(target),posix)
-    include targets/posix.mk
-else
-ifeq ($(target),stm32f4Discovery)
-    FWINC += targets/STM32F4Discovery
-    include targets/STM32F4Discovery.mk
-    UDEFS += -DCHIBIOS_PRINTF
-else
-ifeq ($(target),stm32l053_nucleo)
-    FWINC += targets/STM32L053_nucleo
-    include targets/STM32L053_nucleo.mk
-    UDEFS += -DCHIBIOS_PRINTF
-else
-$(error Please specify properly target. More info -> make help)
-endif
-endif
+include targets/$(target)/target.mk
+FWINC += targets/$(target)
+
 endif
 
+# Clean configuration
 
+ifeq ($(MAKECMDGOALS), clean_build)
 
+ifeq ($(target),)
+    $(error Please specify target! make target=... clean_build)
+endif
+
+include targets/$(target)/target.mk
+
+endif
 
 help:
 	@echo "***********  ARM SDK MAKEFILE HELP  **********"
@@ -43,37 +42,38 @@ help:
 	@echo "make help                                        Show this help"
 	@echo "make configure                                   Configure environement for fixture generators"
 	@echo "make distclean                                   Deconfigure environement, remove additional and builds files"
-	@echo "make [target=...] all                            Simply compile test for target using available files"
+	@echo "make target=... clean_build                      Clean all compile files with target build directory"
+	@echo "make target=... all                              Simply compile test for target using available files"
 
-target-list:
-	@echo "┌──────────────────────────────  TARGETS  ────────────────────────────┐"
-	@echo "│    Availatble targets : target=...                                  │"
-	@echo "├──────────────────────────────────────────────────┬──────────────────┤"
-	@echo "│         TARGET                                   │      STRING      │"
-	@echo "├──────────────────────────────────────────────────┼──────────────────┤"
-	@echo "│ Linux posix (default)                            │ posix            │"
-	@echo "│ STM32L053 nucleo dev board                       │ stm32l053_nucleo │"
-	@echo "│ STM32F4 Discovery board with USB CDC driver      │ stm32f4Discovery │"
-	@echo "└──────────────────────────────────────────────────┴──────────────────┘"
-	
+clean_build: clean
+	@echo "Cleaning build $(target)"
+	@rm -r -f build_$(target)
+	@rm -r -f app/.dep
+	@rm -r -f .dep
+
 configure:
 	@echo "Configure environement..."
-	@if test -d tools; then echo "toold directory abort"; else mkdir tools; fi
+	@if test -d tools; then echo "tools directory exist!"; else mkdir tools; fi
 	@echo "Downloading the newest GCC toolchain..."
 	@./scripts/install_new_gcc.sh 
 	@echo "Downloading the newest openocd debugger..."
 	@./scripts/install_new_openocd.sh 
 	@echo "Cloning ChibiOS..."
-	@if test -d tools/ChibiOS; then echo "ChibiOS exists - pull" && cd tools/ChibiOS && git pull; else git clone git@github.com:cruz91/ChibiOS.git tools/ChibiOS; fi
-	@cd tools/ChibiOS && git checkout feature-stm32l053-support
+	@if test -d tools/ChibiOS; then echo "ChibiOS exists - pull" && cd tools/ChibiOS && git pull; else git clone https://github.com/ChibiOS/ChibiOS.git tools/ChibiOS; fi
 	@echo "Cloning format library..."
 	@if test -d tools/format; then echo "format exists"; else git clone git@github.com:nejohnson/format.git tools/format; fi
 	@echo "Done!"
 
-distclean: clean
+distclean:
 	@echo "Deconfigure environement..."
 	@./scripts/clean_all.sh
 	@rm -r -f build_*
 	@rm -r -f app/.dep
+	@rm -r -f .dep
+	@echo "Done!"
+
+install:
+	@echo "Downloading application to MCU..."
+	@./targets/$(target)/download_to_MCU.sh build_$(target)/arm_sdk.hex
 	@echo "Done!"
 

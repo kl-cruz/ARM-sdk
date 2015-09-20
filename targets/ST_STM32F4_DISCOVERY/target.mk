@@ -1,4 +1,4 @@
-#############################################################################
+##############################################################################
 # Build global options
 # NOTE: Can be overridden externally.
 #
@@ -80,7 +80,7 @@ endif
 PROJECT = arm_sdk
 
 # Imported source files and paths
-CHIBIOS = ../ExtraRepos/ChibiOS
+CHIBIOS = tools/ChibiOS
 # Startup files.
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
@@ -104,7 +104,8 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(TESTSRC)
+       $(TESTSRC) \
+       $(FWSRC)
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -135,7 +136,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various $(FWINC)
 
 #
 # Project, sources and paths
@@ -185,7 +186,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = $(CUSTOM_DEFINES)
+UDEFS += $(CUSTOM_DEFINES)
 
 # Define ASM defines here
 UADEFS =
@@ -199,9 +200,8 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-INCDIR += $(FWINC) targets targets/STM32F4
-CSRC += $(FWSRC) targets/STM32F4/platform_utils.c 
-#targets/STM32F4/board.c
+INCDIR += targets targets/$(target)
+CSRC += targets/$(target)/platform_utils.c
 
 #
 # End of user defines

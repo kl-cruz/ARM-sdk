@@ -1,4 +1,3 @@
-
 ##############################################################################
 # Build global options
 # NOTE: Can be overridden externally.
@@ -6,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -55,13 +54,13 @@ endif
 # Stack size to be allocated to the Cortex-M process stack. This stack is
 # the stack used by the main() thread.
 ifeq ($(USE_PROCESS_STACKSIZE),)
-  USE_PROCESS_STACKSIZE = 0x600
+  USE_PROCESS_STACKSIZE = 0x400
 endif
 
 # Stack size to the allocated to the Cortex-M main/exceptions stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  USE_EXCEPTIONS_STACKSIZE = 0x600
+  USE_EXCEPTIONS_STACKSIZE = 0x400
 endif
 
 #
@@ -78,20 +77,18 @@ PROJECT = arm_sdk
 # Imported source files and paths
 CHIBIOS = tools/ChibiOS
 # Startup files.
-include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32l0xx.mk
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32l1xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO_L053R8/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO_L152RE/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v6m.mk
-# Other files (optional).
-#include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32L053x8.ld
+LDSCRIPT= $(STARTUPLD)/STM32L152xB.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -144,7 +141,7 @@ INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
 # Compiler settings
 #
 
-MCU  = cortex-m0plus
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = ./tools/toolchain/bin/arm-none-eabi-
@@ -198,8 +195,8 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-INCDIR += targets targets/STM32L053_nucleo
-CSRC += targets/STM32L053_nucleo/platform_utils.c
+INCDIR += targets targets/$(target)
+CSRC += targets/$(target)/platform_utils.c
 
 #
 # End of user defines
