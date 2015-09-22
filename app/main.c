@@ -12,6 +12,6 @@ int main(void) {
 
 	while (true) {
 		info("%i", i++);
-		chThdSleepMilliseconds(100);
+		chThdSleepMilliseconds(1000);
 	}
 }

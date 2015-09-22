@@ -4,34 +4,18 @@ FWSRC += tools/format/src/format.c tools/format/lib/printf.c tools/format/lib/sn
 FWINC += tools/format/src tools/format/lib
 PRJ_ROOT = 
 
-ifeq ($(MAKECMDGOALS),)
-$(error Please specify make goals!. More info -> make help)
-endif 
+
 
 # All configuration
 
-ifeq ($(MAKECMDGOALS), all)
-
 ifeq ($(target),)
+    ifeq ($(MAKECMDGOALS),)
     $(error Please specify target! make target=... all)
-endif
-
-BUILDDIR = build_$(target)
-include targets/$(target)/target.mk
-FWINC += targets/$(target)
-
-endif
-
-# Clean configuration
-
-ifeq ($(MAKECMDGOALS), clean_build)
-
-ifeq ($(target),)
-    $(error Please specify target! make target=... clean_build)
-endif
-
-include targets/$(target)/target.mk
-
+    endif
+else
+    BUILDDIR = build_$(target)
+    include targets/$(target)/target.mk
+    FWINC += targets/$(target)
 endif
 
 help:
@@ -72,8 +56,13 @@ distclean:
 	@rm -r -f .dep
 	@echo "Done!"
 
-install:
+install: all
 	@echo "Downloading application to MCU..."
 	@./targets/$(target)/download_to_MCU.sh build_$(target)/arm_sdk.hex
 	@echo "Done!"
+
+debug:
+	@echo "Connecting to MCU..."
+	@./targets/$(target)/debug_MCU.sh
+	@echo "Debug session finished!"
 
