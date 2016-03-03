@@ -9,3 +9,5 @@ done
         -c "program ${ARRAY[0]} exit ${ARRAY[1]}" \
         -c "reset run" \
         -c "shutdown"
+
+./tools/openocd/src/openocd -f tools/openocd/tcl/interface/stlink-v2-1.cfg -f tools/openocd/tcl/target/stm32l0.cfg -c init -c reset run -c shutdown
