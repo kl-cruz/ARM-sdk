@@ -36,8 +36,8 @@ void init(void)
    * Activates the serial driver 2 using the driver default configuration.
    * PA2(TX) and PA3(RX) are routed to USART2.
    */
-  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(4));
-  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(4));
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
   /*
    * Stopping and restarting the USB in order to test the stop procedure. The
